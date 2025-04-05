@@ -32,11 +32,15 @@
         <span class="todo-title"><%= todo.title %></span>
         <span class="todo-description"><%= todo.description %></span>
         <button class="delete-btn">delete</button>
+        <button class="edit-btn">edit</button>
+        <button class="complete-btn">complete</button>
         </li>
         <% }) %>
       </ul>
     </div>
     <script>
+
+      
       document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', (e) => {
           
@@ -55,9 +59,44 @@
                 e.target.parentElement.remove();
               }
             });
+            window.location.reload();
         });
       });
       
+      document.querySelectorAll('.complete-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+        console.log(!button.parentElement.children[2].value);
+
+          fetch(`/`, {
+            method: 'PATCH',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  "title": button.parentElement.children[0].value, 
+                  "description": button.parentElement.children[1].value,
+                  "completed": button.parentElement.children[2].value === 'true' ? 'false' : 'true',
+              }), 
+          })
+            .then((response) => response.json())
+          
+            window.location.reload();
+        });
+      });
+
+      document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const title = button.parentElement.children[0].innerText;
+          const description = button.parentElement.children[1].innerText;
+          const completed = button.parentElement.children[2].innerText;
+          document.querySelector('input[name="title"]').value = title;
+          document.querySelector('input[name="description"]').value = description;
+          document.querySelector('input[name="completed"]').value = completed;
+
+
+        });
+      });
     </script>
+
   </body>
 </html>
